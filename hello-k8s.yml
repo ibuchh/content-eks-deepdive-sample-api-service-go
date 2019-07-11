@@ -6,7 +6,7 @@ spec:
   type: LoadBalancer
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 8080
   selector:
     app: hello-k8s
 ---
@@ -37,5 +37,5 @@ spec:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 
