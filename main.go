@@ -34,13 +34,14 @@ func main() {
 		io.WriteString(w, string(out))
 
 		fmt.Println("Hello world - the log message")
+
 	})
 	http.ListenAndServe(":8080", nil)
 }
 
 type response struct {
 	Message string   `json:"message"`
-	EnvVars []string `json:"env"`
+	EnvVars []string `json:"<h1>Test1</h1><div>app</div>""`
 	Fib     []int    `json:"fib"`
 }
 
