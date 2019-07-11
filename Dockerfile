@@ -1,18 +1,20 @@
-# This is a multi-stage build. First we are going to compile and then
-# create a small image for runtime.
-FROM golang:1.11 as builder
+FROM ubuntu:12.04
 
-RUN mkdir -p /go/src/github.com/linuxacademy/content-eks-deepdive-sample-api-service-go
-WORKDIR /go/src/github.com/linuxacademy/content-eks-deepdive-sample-api-service-go
-RUN useradd -u 10001 app
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# Install dependencies
+RUN apt-get update -y
+RUN apt-get install -y git curl apache2 php5 libapache2-mod-php5 php5-mcrypt php5-mysql
 
-FROM scratch
+# Install app
+RUN rm -rf /var/www/*
+ADD src /var/www
 
-COPY --from=builder /go/src/github.com/linuxacademy/content-eks-deepdive-sample-api-service-go/main /main
-COPY --from=builder /etc/passwd /etc/passwd
-USER app
+# Configure apache
+RUN a2enmod rewrite
+RUN chown -R www-data:www-data /var/www
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
 
 EXPOSE 8080
-CMD ["/main"]
+
+CMD ["/usr/sbin/apache2", "-D",  "FOREGROUND"]
